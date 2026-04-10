@@ -8,7 +8,7 @@ st.set_page_config(page_title="PantherFitness Database", layout="centered")
 
 st.title("PantherFitness Database")
 
-tab1,tab2 = st.tabs(["Users","Workouts"])
+tab1,tab2,tab3,tab4 = st.tabs(["Users","Workouts","Workout Statistics","User Goals"])
 
 with tab1:
     st.subheader("Users Table")
@@ -149,3 +149,68 @@ with tab2:
             if st.button("Clear Filter"):
                 st.session_state.filter_user_id = None
                 st.rerun()
+
+with tab3:
+    st.subheader("Workout Statistics")
+
+    try:
+        response = requests.get(f"{API_BASE_URL}/workout_stats", timeout=5)
+
+        if response.status_code == 200:
+            workout_stats = response.json()
+            df = pd.DataFrame(workout_stats)
+
+            if not df.empty:
+                df = df[["User_id", "Name", "Number_Of_Workouts", "Time_Spent_Working_Out"]]
+                df = df.reset_index(drop=True)
+
+            st.data_editor(
+                df,
+                use_container_width=True,
+                hide_index=True
+            )
+
+
+
+        else:
+            try:
+                error_json = response.json()
+                st.error(f"Failed to fetch users: {error_json.get('error', 'Unknown error')}")
+            except Exception:
+                st.error("Failed to fetch users.")
+    except requests.exceptions.ConnectionError:
+        st.error("Could not connect to the Flask API. Make sure backend/app.py is running.")
+    except Exception as e:
+        st.error(f"Error connecting to API: {e}")
+with tab4:
+    st.subheader("User Goals")
+
+    try:
+        response = requests.get(f"{API_BASE_URL}/user_goal_info", timeout=5)
+
+        if response.status_code == 200:
+            workout_stats = response.json()
+            df = pd.DataFrame(workout_stats)
+
+            if not df.empty:
+                df = df[["name", "user_id", "metric_type", "current_value","target_value","goal_status"]]
+                df = df.reset_index(drop=True)
+
+            st.data_editor(
+                df,
+                use_container_width=True,
+                hide_index=True
+            )
+
+
+
+        else:
+            try:
+                error_json = response.json()
+                st.error(f"Failed to fetch users: {error_json.get('error', 'Unknown error')}")
+            except Exception:
+                st.error("Failed to fetch users.")
+    except requests.exceptions.ConnectionError:
+        st.error("Could not connect to the Flask API. Make sure backend/app.py is running.")
+    except Exception as e:
+        st.error(f"Error connecting to API: {e}")
