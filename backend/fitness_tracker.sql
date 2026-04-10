@@ -58,3 +58,11 @@ CREATE TABLE WORKOUT_EXERCISE(
         REFERENCES EXERCISE(exercise_id)
         ON DELETE CASCADE
 );
+
+CREATE Table Exercise_Library(
+    exercise_id INT NOT NULL,
+    exercise_name VARCHAR(100),
+    muscle_group VARCHAR(50),
+    equipment VARCHAR(50),
+    PRIMARY KEY (exercise_id)
+);
