@@ -13,30 +13,29 @@ def get_user_workouts():
         conn = get_connection()
         cursor = conn.cursor(dictionary=True)
 
-        user_id = request.args.get("user_id")
+        user_id = request.args.get("user_id", type=int)
 
         query = """
             SELECT 
                 u.name,
-                w.workout_id,
+                we.workout_id,
                 e.exercise_name,
-                w.sets,
-                w.reps,
-                w.weight_used,
-                w.time_spent
-            FROM WorkoutExercise w
+                we.num_sets,
+                we.reps,
+                we.weight_used,
+                we.time_spent
+            FROM WorkoutExercise we
             JOIN ExerciseLibrary e
-                ON w.exercise_id = e.exercise_id
-            JOIN Workout
-                ON w.workout_id = Workout.workout_id
+                ON we.exercise_id = e.exercise_id
+            JOIN Workout w
+                ON we.workout_id = w.workout_id
             JOIN Users u
-                ON Workout.user_id = u.user_id
+                ON w.user_id = u.user_id
         """
-
         values = ()
 
-        if user_id:
-            query += " WHERE Workout.user_id = %s"
+        if user_id is not None:
+            query += " WHERE w.user_id = %s"
             values = (user_id,)
 
         cursor.execute(query, values)
@@ -46,6 +45,50 @@ def get_user_workouts():
 
     except Exception as e:
         return jsonify({"error": f"Failed to fetch workouts: {str(e)}"}), 500
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+
+@workout_bp.route("/workouts", methods=["POST"])
+def add_workout():
+    data = request.get_json() or {}
+
+    required_fields = ["workout_id", "workout_date", "duration_minutes", "user_id"]
+    for field in required_fields:
+        if field not in data or data[field] in [None, ""]:
+            return jsonify({"error": f"{field} is required"}), 400
+
+    conn = None
+    cursor = None
+
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+
+        query = """
+            INSERT INTO Workout (workout_id, workout_date, duration_minutes, user_id)
+            VALUES (%s, %s, %s, %s)
+        """
+        values = (
+            int(data["workout_id"]),
+            data["workout_date"],
+            int(data["duration_minutes"]),
+            int(data["user_id"])
+        )
+
+        cursor.execute(query, values)
+        conn.commit()
+
+        return jsonify({"message": "Workout added successfully"}), 201
+
+    except Exception as e:
+        if conn:
+            conn.rollback()
+        return jsonify({"error": f"Failed to add workout: {str(e)}"}), 500
 
     finally:
         if cursor:

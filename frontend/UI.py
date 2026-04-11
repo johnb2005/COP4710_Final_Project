@@ -114,7 +114,7 @@ with tab2:
             df = pd.DataFrame(workouts)
 
             if not df.empty:
-                df = df[["name","workout_id","exercise_name","sets","reps","weight_used","time_spent"]]
+                df = df[["name","workout_id","exercise_name","num_sets","reps","weight_used","time_spent"]]
                 df = df.reset_index(drop=True)
 
             st.data_editor(
@@ -149,6 +149,37 @@ with tab2:
             if st.button("Clear Filter"):
                 st.session_state.filter_user_id = None
                 st.rerun()
+
+    st.subheader("Add New Workout")
+
+    with st.expander("Workout Form"):
+        workout_id = st.number_input("Workout ID", min_value=1, step=1, key="new_workout_id")
+        workout_date = st.date_input("Workout Date", key="new_workout_date")
+        duration_minutes = st.number_input("Duration (minutes)", min_value=0, step=1, key="new_duration")
+        user_id = st.number_input("User ID", min_value=1, step=1, key="new_workout_user_id")
+
+        if st.button("Add Workout"):
+            payload = {
+                "workout_id": int(workout_id),
+                "workout_date": str(workout_date),
+                "duration_minutes": int(duration_minutes),
+                "user_id": int(user_id)
+            }
+
+            try:
+                response = requests.post(
+                    f"{API_BASE_URL}/workouts",
+                    json=payload,
+                    timeout=5
+                )
+
+                if response.status_code == 201:
+                    st.success("Workout added successfully.")
+                    st.rerun()
+                else:
+                    st.error("Failed to add workout.")
+            except Exception as e:
+                st.error(f"Error connecting to API: {e}")
 
 with tab3:
     st.subheader("Workout Statistics")
@@ -214,3 +245,51 @@ with tab4:
         st.error("Could not connect to the Flask API. Make sure backend/app.py is running.")
     except Exception as e:
         st.error(f"Error connecting to API: {e}")
+
+    with st.expander("Add New Goal"):
+        goal_id = st.number_input("Goal ID", min_value=1, step=1, key="new_goal_id")
+        user_id = st.number_input("User ID", min_value=1, step=1, key="new_goal_user_id")
+        metric_type = st.text_input("Metric Type", key="new_metric_type")
+        current_value = st.number_input("Current Value", step=0.01, format="%.2f", key="new_current_value")
+        target_value = st.number_input("Target Value", step=0.01, format="%.2f", key="new_target_value")
+        start_date = st.date_input("Start Date", key="new_goal_start_date")
+        end_date = st.date_input("End Date", key="new_goal_end_date")
+
+        if st.button("Add Goal"):
+            metric_type = metric_type.strip()
+
+            if not metric_type:
+                st.error("Metric type is required.")
+            elif end_date < start_date:
+                st.error("End date cannot be before start date.")
+            else:
+                payload = {
+                    "goal_id": int(goal_id),
+                    "user_id": int(user_id),
+                    "metric_type": metric_type,
+                    "current_value": float(current_value),
+                    "target_value": float(target_value),
+                    "start_date": str(start_date),
+                    "end_date": str(end_date)
+                }
+
+                try:
+                    response = requests.post(
+                        f"{API_BASE_URL}/goals",
+                        json=payload,
+                        timeout=5
+                    )
+
+                    if response.status_code == 201:
+                        st.success("Goal added successfully.")
+                        st.rerun()
+                    else:
+                        try:
+                            error_json = response.json()
+                            st.error(error_json.get("error", "Failed to add goal."))
+                        except Exception:
+                            st.error("Failed to add goal.")
+                except requests.exceptions.ConnectionError:
+                    st.error("Could not connect to the Flask API. Make sure backend/app.py is running.")
+                except Exception as e:
+                    st.error(f"Error connecting to API: {e}")
