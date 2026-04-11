@@ -1,0 +1,81 @@
+-- Query 1 Multi table join
++----------+------------+----------------+------+------+-------------+------------+
+| name     | workout_id | exercise_name  | sets | reps | weight_used | time_spent |
++----------+------------+----------------+------+------+-------------+------------+
+| Alex Kim |       1001 | Barbell Squat  |    4 |    8 |       80.00 |         20 |
+| Alex Kim |       1001 | Plank          |    3 |    1 |        0.00 |         10 |
+| Alex Kim |       1001 | Shoulder Press |    4 |   10 |       22.50 |         15 |
+| Alex Kim |       1002 | Pull-Up        |    4 |    8 |        0.00 |         15 |
+| Alex Kim |       1002 | Running        |    1 |    1 |        0.00 |         30 |
++----------+------------+----------------+------+------+-------------+------------+
+Total Rows: 5 rows in set (0.003 sec)
+
+-- Query 2 GROUP BY with aggregation
++---------+---------------+--------------------+------------------------+
+| User_id | Name          | Number_Of_Workouts | Time_Spent_Working_Out |
++---------+---------------+--------------------+------------------------+
+|       1 | Alex Kim      |                  2 |                    105 |
+|       2 | Jordan Lee    |                  1 |                     50 |
+|       3 | Priya Patel   |                  1 |                     40 |
+|       4 | Sam Rivera    |                  1 |                     70 |
+|       5 | Alice Johnson |                  1 |                     60 |
+
+Total Rows: 10 rows in set (0.002 sec)
+
+-- Query 3 Where subquery 
++---------+----------+
+| user_id | name     |
++---------+----------+
+|       1 | Alex Kim |
++---------+----------+
+Total Rows: 1 row in set (0.004 sec)
+
+-- Query 4 CASE
++---------------+---------+----------------------+---------------+--------------+-------------+
+| name          | user_id | metric_type          | current_value | target_value | goal_status |
++---------------+---------+----------------------+---------------+--------------+-------------+
+| Alex Kim      |       1 | Weight Loss (kg)     |         78.50 |        72.00 | Not Met     |
+| Jordan Lee    |       2 | Bench Press 1RM (kg) |         85.00 |       100.00 | Not Met     |
+| Priya Patel   |       3 | 5K Time (min)        |         29.50 |        25.00 | Not Met     |
+| Sam Rivera    |       4 | Body Fat (%)         |         22.00 |        18.00 | Not Met     |
+| Alice Johnson |       5 | Weight Loss          |        180.00 |       150.00 | Not Met     |
+
+Total Rows: 10 rows in set (0.001 sec)
+
+-- Query 5 Multiple conditions filter
++----------+------------+----------------+------+------+-------------+------------+
+| name     | workout_id | exercise_name  | sets | reps | weight_used | time_spent |
++----------+------------+----------------+------+------+-------------+------------+
+| Alex Kim |       1001 | Barbell Squat  |    4 |    8 |       80.00 |         20 |
+| Alex Kim |       1001 | Plank          |    3 |    1 |        0.00 |         10 |
+| Alex Kim |       1001 | Shoulder Press |    4 |   10 |       22.50 |         15 |
+| Alex Kim |       1002 | Pull-Up        |    4 |    8 |        0.00 |         15 |
+| Alex Kim |       1002 | Running        |    1 |    1 |        0.00 |         30 |
++----------+------------+----------------+------+------+-------------+------------+
+Total Rows: 5 rows in set (0.001 sec)
+
+-- Query 6 INSERT
++------------+-------------+------+------+-------------+------------+------------------+
+| workout_id | exercise_id | sets | reps | weight_used | time_spent | difficulty_level |
++------------+-------------+------+------+-------------+------------+------------------+
+|       1006 |         108 |    4 |   10 |      100.00 |         20 | Intermediate     |
+|       1006 |         109 |    3 |    8 |       80.00 |         15 | Beginner         |
++------------+-------------+------+------+-------------+------------+------------------+
+Total Rows: 2 rows in set (0.000 sec)
+
+-- Query 7 UPDATE
++---------+---------+------------------+---------------+--------------+------------+------------+
+| goal_id | user_id | metric_type      | current_value | target_value | start_date | end_date   |
++---------+---------+------------------+---------------+--------------+------------+------------+
+|    2001 |       1 | Weight Loss (kg) |         26.50 |        72.00 | 2026-01-01 | 2026-06-01 |
++---------+---------+------------------+---------------+--------------+------------+------------+
+Total Rows: 1 row in set (0.001 sec)
+
+-- Query 8 Non-trivial query
+Empty set (0.001 sec)
+
+
+
+
+
+
