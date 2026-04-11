@@ -91,14 +91,28 @@ WHERE w.user_id = 1
 ORDER BY we.workout_id, e.exercise_name;
 
 -- Query 6 INSERT
-INSERT INTO ExerciseLibrary (exercise_id, exercise_name, muscle_group, equipment)
-VALUES (109, 'Hammer Curl', 'Arms', 'Dumbbells');
+INSERT INTO WORKOUTEXERCISE (workout_id, exercise_id, `sets`, reps, weight_used, time_spent, difficulty_level) 
+VALUES (1006, 108, 4, 10, 100.00, 20, 'Intermediate');
 
 -- Query 7 UPDATE
 UPDATE Goal
 SET current_value = 26.50
 WHERE user_id = 1;
 
--- Query 8 DELETE 
-DELETE FROM ExerciseLibrary
-WHERE exercise_id = 109;
+-- Query 8 Non-trivial query
+SELECT 
+    u.user_id,
+    u.name,
+    g.metric_type,
+    g.current_value,
+    g.target_value,
+    AVG(we.weight_used) AS avg_weight,
+    COUNT(w.workout_id) AS total_workouts
+FROM USERS u
+JOIN GOAL g ON u.user_id = g.user_id
+JOIN WORKOUT w ON u.user_id = w.user_id
+JOIN WORKOUTEXERCISE we ON w.workout_id = we.workout_id
+WHERE g.current_value < g.target_value
+GROUP BY u.user_id, u.name, g.metric_type, g.current_value, g.target_value
+HAVING AVG(we.weight_used) > 50
+   AND COUNT(w.workout_id) >= 3;
