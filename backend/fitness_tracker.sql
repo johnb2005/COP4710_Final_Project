@@ -33,7 +33,7 @@ CREATE TABLE WORKOUT(
         ON DELETE CASCADE
 );
 
-CREATE TABLE WORKOUT_EXERCISE(
+CREATE TABLE WORKOUTEXERCISE(
     workout_id INT NOT NULL,
     exercise_id INT NOT NULL,
     sets INT,
@@ -50,7 +50,7 @@ CREATE TABLE WORKOUT_EXERCISE(
         ON DELETE CASCADE
 );
 
-CREATE Table Exercise_Library(
+CREATE Table ExerciseLibrary(
     exercise_id INT NOT NULL,
     exercise_name VARCHAR(100),
     muscle_group VARCHAR(50),
