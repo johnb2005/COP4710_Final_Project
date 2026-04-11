@@ -1,12 +1,3 @@
- 
-
-CREATE TABLE EXERCISE(
-    exercise_id INT NOT NULL,
-    exercise_name VARCHAR(100),
-    muscle_group VARCHAR(50),
-    equipment VARCHAR(50),
-    PRIMARY KEY (exercise_id)
-);
 
 CREATE TABLE GOAL(
     goal_id INT NOT NULL,
@@ -22,7 +13,7 @@ CREATE TABLE GOAL(
         ON DELETE CASCADE
 );
 
-CREATE TABLE USER(
+CREATE TABLE USERS(
     user_id INT NOT NULL,
     name VARCHAR(100),
     email VARCHAR(255),
