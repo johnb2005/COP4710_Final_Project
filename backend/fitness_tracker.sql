@@ -16,8 +16,8 @@ CREATE TABLE GOAL(
 CREATE TABLE USERS(
     user_id INT NOT NULL,
     name VARCHAR(100),
-    email VARCHAR(255),
-    age INT,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    age INT Check (age > 0),
     join_date DATE,
     PRIMARY KEY (user_id)
 );
@@ -25,7 +25,7 @@ CREATE TABLE USERS(
 CREATE TABLE WORKOUT(
     workout_id INT NOT NULL,
     workout_date DATE,
-    duration_minutes INT,
+    duration_minutes INT between 0 and 1440,
     user_id INT,
     PRIMARY KEY (workout_id),
     FOREIGN KEY (user_id)
